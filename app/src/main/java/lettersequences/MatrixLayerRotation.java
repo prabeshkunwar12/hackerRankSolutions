@@ -35,27 +35,52 @@ public class MatrixLayerRotation {
 
     }
 
+    /**
+     * @param matrix
+     * @param r
+     * # -> current position
+     * $ -> target element
+     * r -> 8
+     *        level   nLevelMin    jPos  
+     *           |       |           | 
+     *           V       V           V
+     *       *   *   *   *   *   *   *   *
+     *       *   -   -   #   -   -   -   * <-- mLevelMin, level
+     *       *   -   *   *   *   *   -   *
+     *       *   -   *   *   *   *   -   *
+     *       *   -   *   *   *   *   -   *
+     *       *   -   *   *   *   *   -   *
+     *       *   -   *   *   *   *   $   * <-- iPos
+     *       *   -   *   *   *   *   -   *
+     *       *   -   -   -   -   -   -   * <-- mLevelMax
+     *       *   *   *   *   *   *   *   *
+     *                               ^
+     *                               |    
+     *                            nLevelMax
+     */
+
     public static void matrixRotation(List<List<Integer>> matrix, int r) {
         // Write your code here
         int m = matrix.size() - 1;
         int n = matrix.get(0).size() - 1;
         List<List<Integer>> returnArr = new ArrayList<>();
+
         for (int i = 0; i <= m; i++) {
             List<Integer> arr = new ArrayList<>();
             for (int j = 0; j <= n; j++) {
-                int mLevelMin = Math.min(i, Math.abs(i - m));
-                int nLevelMin = Math.min(j, Math.abs(j - n));
-                int level = Math.min(mLevelMin, nLevelMin);
-                int mLevelMax = m - level;
-                int nLevelMax = n - level;
-                int ringSize = 2 * (mLevelMax + nLevelMax - 2 * level);
-                int actRot = r % ringSize;
+                int mLevelMin = Math.min(i, Math.abs(i - m)); //lowest level in y axis
+                int nLevelMin = Math.min(j, Math.abs(j - n)); //lowest level in x axis
+                int level = Math.min(mLevelMin, nLevelMin); 
+                int mLevelMax = m - level; 
+                int nLevelMax = n - level; // starting of level (level, level) and end of level (mLevelMax, nLevelMax)
+                int ringSize = 2 * (mLevelMax + nLevelMax - 2 * level); //ringsize = 2(length + breadth - 2)
+                int actRot = r % ringSize; //finding min rotation to achive the goal
 
-                int iPos = i;
+                int iPos = i;  // (iPos, jPos) is the position of target element
                 int jPos = j;
 
                 while (actRot > 0) {
-                    if (iPos == level && jPos < nLevelMax) {
+                    if (iPos == level && jPos < nLevelMax) { //to right
                         if (jPos + actRot > nLevelMax) {
                             actRot -= nLevelMax - jPos;
                             jPos = nLevelMax;
@@ -63,7 +88,7 @@ public class MatrixLayerRotation {
                             jPos += actRot;
                             actRot = 0;
                         }
-                    } else if (jPos == nLevelMax && iPos < mLevelMax) {
+                    } else if (jPos == nLevelMax && iPos < mLevelMax) {//going down
                         if (iPos + actRot > mLevelMax) {
                             actRot -= mLevelMax - iPos;
                             iPos = mLevelMax;
@@ -71,7 +96,7 @@ public class MatrixLayerRotation {
                             iPos += actRot;
                             actRot = 0;
                         }
-                    } else if (iPos == mLevelMax && jPos > level) {
+                    } else if (iPos == mLevelMax && jPos > level) {//to left
                         if (jPos - actRot < level) {
                             actRot -= jPos - level;
                             jPos = level;
@@ -79,7 +104,7 @@ public class MatrixLayerRotation {
                             jPos -= actRot;
                             actRot = 0;
                         }
-                    } else {
+                    } else {//going up
                         if (iPos - actRot < level) {
                             actRot -= iPos - level;
                             iPos = level;
